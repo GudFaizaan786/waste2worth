@@ -7,9 +7,9 @@ const manrope = Manrope({ subsets: ['latin'], variable: '--font-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
 export const metadata: Metadata = {
-  title: 'ReLoop — Smart Waste Segregation & Recycling',
+  title: 'Waste2Worth — Don\'t throw value away',
   description:
-    'ReLoop connects citizens, collectors, and recycling hubs to turn segregated waste into Eco-Credits and clean raw material.',
+    'Waste2Worth is a traceable recyclable-waste network connecting citizens, verified collectors, material recovery hubs, and authorized recyclers — every kilogram gets a digital journey.',
   generator: 'v0.app',
   icons: {
     icon: [

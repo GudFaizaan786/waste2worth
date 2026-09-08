@@ -1,10 +1,10 @@
 'use client'
 
-import { Check, CalendarCheck, Truck, Scale, Coins } from 'lucide-react'
-import { ORDER_STEPS, type Order } from '@/lib/waste-data'
+import { Check, CalendarCheck, Truck, Scale, Coins, Recycle } from 'lucide-react'
+import { ORDER_STEPS, formatRupees, type Order } from '@/lib/waste-data'
 import { cn } from '@/lib/utils'
 
-const STEP_ICONS = [CalendarCheck, Truck, Scale, Coins]
+const STEP_ICONS = [CalendarCheck, Truck, Scale, Coins, Recycle]
 
 export function OrderTimeline({ order }: { order: Order }) {
   return (
@@ -40,7 +40,7 @@ export function OrderTimeline({ order }: { order: Order }) {
               <p
                 className={cn(
                   'text-sm font-semibold',
-                  current ? 'text-foreground' : done ? 'text-foreground' : 'text-muted-foreground',
+                  current || done ? 'text-foreground' : 'text-muted-foreground',
                 )}
               >
                 {label}
@@ -61,15 +61,24 @@ function stepHint(i: number, current: boolean, done: boolean, order: Order): str
     case 0:
       return `Order ${order.id} placed`
     case 1:
-      return current ? 'Kabadiwala on the way' : done ? 'Collector arrived' : 'Awaiting dispatch'
+      return current
+        ? `${order.collectorName} is on the way`
+        : done
+          ? 'Collector arrived'
+          : 'Awaiting collector'
     case 2:
       return order.verifiedWeight
-        ? `Verified ${order.verifiedWeight} kg${order.photoVerified ? ' · AI checked' : ''}`
+        ? `Verified ${order.verifiedWeight} kg${order.photoVerified ? ' · photo + OTP' : ''}`
         : 'Weighing at your door'
     case 3:
-      return order.pointsAwarded
-        ? `${order.pointsAwarded} pts credited`
-        : 'Reward on the way'
+      if (!order.transactionId) return 'Reward on the way'
+      return order.payout === 'credits'
+        ? `${order.pointsAwarded} pts · Txn #${order.transactionId}`
+        : `${formatRupees(order.cashAwarded ?? 0)} · Txn #${order.transactionId}`
+    case 4:
+      return order.batchId
+        ? `Batch #${order.batchId} → ${order.recyclerName}`
+        : 'Awaiting hub dispatch'
     default:
       return ''
   }

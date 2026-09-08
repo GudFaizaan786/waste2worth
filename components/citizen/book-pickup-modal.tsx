@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { X, MapPin, Banknote, Coins, Check } from 'lucide-react'
+import { X, MapPin, Banknote, Coins, Check, Flame } from 'lucide-react'
 import {
   WASTE_CATEGORIES,
-  averageRate,
+  avgCashRate,
+  avgPointsRate,
+  formatRupees,
   type CategoryId,
   type PayoutPreference,
 } from '@/lib/waste-data'
@@ -26,7 +28,7 @@ export function BookPickupModal({
   onClose: () => void
   onSubmit: (draft: PickupDraft) => void
 }) {
-  const [categories, setCategories] = useState<CategoryId[]>(['single-use'])
+  const [categories, setCategories] = useState<CategoryId[]>(['plastic'])
   const [estWeight, setEstWeight] = useState(4)
   const [address, setAddress] = useState('')
   const [payout, setPayout] = useState<PayoutPreference>('credits')
@@ -34,7 +36,7 @@ export function BookPickupModal({
   useEffect(() => {
     if (open) return
     const t = setTimeout(() => {
-      setCategories(['single-use'])
+      setCategories(['plastic'])
       setEstWeight(4)
       setAddress('')
       setPayout('credits')
@@ -52,8 +54,8 @@ export function BookPickupModal({
 
   if (!open) return null
 
-  const rate = averageRate(categories)
-  const estPoints = Math.round(estWeight * rate)
+  const estPoints = Math.round(estWeight * avgPointsRate(categories))
+  const estCash = estWeight * avgCashRate(categories)
 
   function toggle(id: CategoryId) {
     setCategories((prev) =>
@@ -84,7 +86,7 @@ export function BookPickupModal({
           <div>
             <h2 className="text-lg font-bold tracking-tight">Book a doorstep pickup</h2>
             <p className="text-sm text-muted-foreground">
-              Segregate, schedule, and earn Eco-Credits.
+              Segregate, schedule, and choose your reward.
             </p>
           </div>
           <button
@@ -99,9 +101,9 @@ export function BookPickupModal({
 
         {/* Categories */}
         <fieldset className="mb-5">
-          <legend className="mb-2 text-sm font-semibold">Waste categories</legend>
+          <legend className="mb-2 text-sm font-semibold">What do you have?</legend>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {WASTE_CATEGORIES.map(({ id, label, icon: Icon }) => {
+            {WASTE_CATEGORIES.map(({ id, label, icon: Icon, bonus }) => {
               const checked = categories.includes(id)
               return (
                 <label
@@ -130,7 +132,13 @@ export function BookPickupModal({
                     {checked && <Check className="size-3.5" />}
                   </span>
                   <Icon className="size-4 shrink-0 opacity-70" />
-                  <span className="font-medium">{label}</span>
+                  <span className="flex-1 font-medium">{label}</span>
+                  {bonus && (
+                    <span className="inline-flex items-center gap-0.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                      <Flame className="size-2.5" />
+                      BONUS
+                    </span>
+                  )}
                 </label>
               )
             })}
@@ -141,7 +149,7 @@ export function BookPickupModal({
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
             <label htmlFor="weight" className="text-sm font-semibold">
-              Estimated weight
+              Approximate quantity
             </label>
             <span className="rounded-md bg-secondary px-2 py-0.5 font-mono text-sm font-semibold text-foreground">
               {estWeight} kg
@@ -176,7 +184,7 @@ export function BookPickupModal({
               required
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="Flat 4B, Green Meadows, Sector 21"
+              placeholder="14 Civil Lines, Jaipur 302006"
               className="w-full bg-transparent py-2.5 text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
@@ -184,7 +192,7 @@ export function BookPickupModal({
 
         {/* Payout toggle */}
         <div className="mb-6">
-          <span className="mb-2 block text-sm font-semibold">Payout preference</span>
+          <span className="mb-2 block text-sm font-semibold">How would you like your reward?</span>
           <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-secondary/60 p-1">
             <PayoutOption
               active={payout === 'cash'}
@@ -205,7 +213,7 @@ export function BookPickupModal({
         <div className="mb-5 flex items-center justify-between rounded-xl bg-accent px-4 py-3 text-accent-foreground">
           <span className="text-sm font-medium">Estimated reward</span>
           <span className="font-mono text-base font-bold">
-            {payout === 'credits' ? `${estPoints} pts` : `$${(estPoints * 0.1).toFixed(2)}`}
+            {payout === 'credits' ? `${estPoints} pts` : formatRupees(estCash)}
           </span>
         </div>
 
@@ -214,7 +222,7 @@ export function BookPickupModal({
           disabled={categories.length === 0 || address.trim() === ''}
           className="w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Confirm pickup
+          Request Pickup
         </button>
       </form>
     </div>
