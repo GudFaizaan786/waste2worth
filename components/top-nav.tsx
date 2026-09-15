@@ -1,6 +1,7 @@
 'use client'
 
-import { Recycle, User, Truck, LayoutDashboard, Play } from 'lucide-react'
+import { useState } from 'react'
+import { Recycle, User, Truck, LayoutDashboard, Play, LogIn, Languages } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export type ViewKey = 'citizen' | 'collector' | 'hub'
@@ -20,6 +21,9 @@ export function TopNav({
   onChange: (v: ViewKey) => void
   onDemo: () => void
 }) {
+  const [language, setLanguage] = useState<'EN' | 'HI'>('EN')
+  const hindi = language === 'HI'
+
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between">
@@ -64,11 +68,15 @@ export function TopNav({
                   )}
                 >
                   <Icon className="size-4" />
-                  <span>{label}</span>
+                  <span>{hindi ? ({ citizen: 'नागरिक', collector: 'कलेक्टर', hub: 'हब' }[key]) : label}</span>
                 </button>
               )
             })}
           </nav>
+          <button type="button" onClick={() => setLanguage(hindi ? 'EN' : 'HI')} className="hidden items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary md:inline-flex" aria-label="Switch language"><Languages className="size-4" /> {hindi ? 'English' : 'हिन्दी'}</button>
+          <a href="/dashboard" className="hidden items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary md:inline-flex">
+            <LogIn className="size-4" /> Login
+          </a>
           <button
             type="button"
             onClick={onDemo}
