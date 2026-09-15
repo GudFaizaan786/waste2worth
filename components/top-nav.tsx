@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Recycle, User, Truck, LayoutDashboard, Play, LogIn, Languages } from 'lucide-react'
+import { Recycle, User, Truck, LayoutDashboard, LogIn, Languages } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 export type ViewKey = 'citizen' | 'collector' | 'hub'
@@ -15,13 +15,11 @@ const TABS: { key: ViewKey; label: string; icon: typeof User }[] = [
 export function TopNav({
   active,
   onChange,
-  onDemo,
 }: {
   active: ViewKey
   onChange: (v: ViewKey) => void
-  onDemo: () => void
 }) {
-  const [language, setLanguage] = useState<'EN' | 'HI'>('EN')
+  const { language, setLanguage, t } = useLanguage()
   const hindi = language === 'HI'
 
   return (
@@ -34,17 +32,9 @@ export function TopNav({
             </span>
             <div className="leading-tight">
               <p className="text-base font-bold tracking-tight">Waste2Worth</p>
-              <p className="text-xs text-muted-foreground">Don&apos;t throw value away</p>
+              <p className="text-xs text-muted-foreground">{t("Don't throw value away")}</p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onDemo}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-primary/40 bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-primary hover:text-primary-foreground md:hidden"
-          >
-            <Play className="size-3.5" />
-            Demo
-          </button>
         </div>
 
         <div className="flex items-center gap-2">
@@ -77,14 +67,6 @@ export function TopNav({
           <a href="/dashboard" className="hidden items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary md:inline-flex">
             <LogIn className="size-4" /> Login
           </a>
-          <button
-            type="button"
-            onClick={onDemo}
-            className="hidden items-center gap-1.5 rounded-xl border border-primary/40 bg-accent px-3.5 py-2 text-sm font-semibold text-accent-foreground transition-colors hover:bg-primary hover:text-primary-foreground md:inline-flex"
-          >
-            <Play className="size-4" />
-            Demo Mode
-          </button>
         </div>
       </div>
     </header>

@@ -1,10 +1,11 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Manrope, Geist_Mono } from 'next/font/google'
+import { Manrope, Geist_Mono, Noto_Sans_Devanagari } from 'next/font/google'
 import './globals.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono' })
+const devanagari = Noto_Sans_Devanagari({ subsets: ['devanagari'], variable: '--font-devanagari' })
 
 export const metadata: Metadata = {
   title: 'Waste2Worth — Don\'t throw value away',
@@ -41,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`light bg-background ${manrope.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`light bg-background ${manrope.variable} ${geistMono.variable} ${devanagari.variable}`}>
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
