@@ -118,28 +118,6 @@ export function createOrder(draft: {
   }
 }
 
-/** Fully populated transaction for a risk-free hackathon demo */
-export function demoOrder(): Order {
-  const verifiedWeight = 3.4
-  const categories: CategoryId[] = ['plastic', 'difficult-plastic']
-  return {
-    id: 'PK-1024',
-    categories,
-    estWeight: 3,
-    address: '14 Civil Lines, Jaipur 302006',
-    payout: 'credits',
-    status: 3,
-    citizenName: 'Priya Sharma',
-    otp: '4821',
-    verifiedWeight,
-    photoVerified: true,
-    transactionId: 'EC20482',
-    pointsAwarded: Math.round(verifiedWeight * avgPointsRate(categories)),
-    cashAwarded: round2(verifiedWeight * avgCashRate(categories)),
-    ...DEFAULTS,
-  }
-}
-
 export function avgCashRate(ids: CategoryId[]): number {
   const picked = WASTE_CATEGORIES.filter((c) => ids.includes(c.id))
   if (picked.length === 0) return 20

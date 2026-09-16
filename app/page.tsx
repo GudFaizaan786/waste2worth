@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { LanguageProvider, useLanguage } from '@/lib/i18n'
 import { TopNav, type ViewKey } from '@/components/top-nav'
 import { CitizenView } from '@/components/citizen/citizen-view'
 import { BookPickupModal, type PickupDraft } from '@/components/citizen/book-pickup-modal'
@@ -9,7 +10,6 @@ import { HubView } from '@/components/hub/hub-view'
 import { WasteJourneyModal } from '@/components/waste-journey-modal'
 import {
   createOrder,
-  demoOrder,
   segregate,
   type Order,
 } from '@/lib/waste-data'
@@ -17,7 +17,8 @@ import {
 const INITIAL_WALLET_POINTS = 1840
 const INITIAL_WALLET_CASH = 126.5
 
-export default function Page() {
+function Waste2WorthApp() {
+  const { t } = useLanguage()
   const [view, setView] = useState<ViewKey>('citizen')
   const [modalOpen, setModalOpen] = useState(false)
   const [journeyOpen, setJourneyOpen] = useState(false)
@@ -68,36 +69,28 @@ export default function Page() {
     )
   }
 
-  function handleDemo() {
-    const demo = demoOrder()
-    setWalletPoints(INITIAL_WALLET_POINTS)
-    setWalletCash(INITIAL_WALLET_CASH)
-    setOrder(demo)
-    setView('citizen')
-  }
-
   function openJourney() {
     setJourneyOpen(true)
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <TopNav active={view} onChange={setView} onDemo={handleDemo} />
+      <TopNav active={view} onChange={setView} />
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6">
           <h1 className="text-balance text-2xl font-bold tracking-tight sm:text-3xl">
-            {view === 'citizen' && 'Turn your recyclable waste into value'}
-            {view === 'collector' && 'Your collection jobs'}
-            {view === 'hub' && 'Material recovery & traceability'}
+            {view === 'citizen' && t('Turn your recyclable waste into value')}
+            {view === 'collector' && t('Your collection jobs')}
+            {view === 'hub' && t('Material recovery & traceability')}
           </h1>
           <p className="mt-1 text-pretty text-sm text-muted-foreground sm:text-base">
             {view === 'citizen' &&
-              'Book doorstep pickups, choose cash or Eco-Credits, and trace every kilogram to the recycler.'}
+              t('Book doorstep pickups, choose cash or Eco-Credits, and trace every kilogram to the recycler.')}
             {view === 'collector' &&
-              'Accept pickups, verify weight with photo and OTP, and release instant citizen payouts.'}
+              t('Accept pickups, verify weight with photo and OTP, and release instant citizen payouts.')}
             {view === 'hub' &&
-              'Aggregate incoming material, segregate streams, and dispatch traceable batches to recyclers.'}
+              t('Aggregate incoming material, segregate streams, and dispatch traceable batches to recyclers.')}
           </p>
         </div>
 
@@ -130,4 +123,8 @@ export default function Page() {
       />
     </div>
   )
+}
+
+export default function Page() {
+  return <LanguageProvider><Waste2WorthApp /></LanguageProvider>
 }
